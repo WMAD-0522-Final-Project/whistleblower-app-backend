@@ -2,8 +2,14 @@ import { Schema, model } from 'mongoose';
 import { ILog } from '../types';
 
 const logSchema = new Schema<ILog>({
-  content: String,
-  userId: Schema.Types.ObjectId,
+  content: {
+    type: String,
+    required: true,
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
   createdAt: {
     type: Number,
     default: () => Date.now(),

@@ -5,11 +5,24 @@ const userSchema = new Schema<IUser>({
   roleId: {
     type: Schema.Types.ObjectId,
     ref: 'Role',
+    required: true,
   },
-  email: String,
-  password: String,
-  firstName: String,
-  lastName: String,
+  email: {
+    type: String,
+    required: true,
+  },
+  password: {
+    type: String,
+    required: true,
+  },
+  firstName: {
+    type: String,
+    required: true,
+  },
+  lastName: {
+    type: String,
+    required: true,
+  },
   department: {
     type: Schema.Types.ObjectId,
     ref: 'Department',
