@@ -4,7 +4,7 @@ import { IUser } from '../types';
 const userSchema = new Schema<IUser>({
   roleId: {
     type: Schema.Types.ObjectId,
-    ref: 'Role',
+    ref: 'UserRole',
     required: true,
   },
   email: {
