@@ -1,12 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { IClaim } from '../types';
-
-enum ClaimStatus {
-  Unhandled = 'unHandled',
-  InProgress = 'inProcess',
-  Done = 'done',
-  Archived = 'archived',
-}
+import { ClaimStatus } from '../types/enums';
 
 const claimSchema = new Schema<IClaim>({
   inChargeAdminIds: [{ type: Schema.Types.ObjectId, ref: 'User' }],

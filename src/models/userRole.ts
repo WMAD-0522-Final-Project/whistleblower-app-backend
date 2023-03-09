@@ -1,11 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { IUserRole } from '../types';
-
-enum UserRoleOption {
-  General = 'general',
-  Admin = 'admin',
-  SuperAdmin = 'superAdmin',
-}
+import { UserRoleOption } from '../types/enums';
 
 const userRoleSchema = new Schema<IUserRole>({
   name: {
