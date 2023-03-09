@@ -15,6 +15,15 @@ const refreshTokenSchema = new Schema<IRefreshToken>({
     type: Number,
     default: () => Date.now(),
   },
+  updatedAt: {
+    type: Number,
+    default: () => Date.now(),
+  },
+});
+
+refreshTokenSchema.pre('save', function (next) {
+  this.updatedAt = Date.now();
+  next();
 });
 
 const RefreshToken = model('RefreshToken', refreshTokenSchema);

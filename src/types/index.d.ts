@@ -70,4 +70,5 @@ export interface IRefreshToken extends MongoDoc {
   userId: Types.ObjectId;
   token: string;
   createdAt: number;
+  updatedAt: number;
 }
