@@ -1,17 +1,30 @@
 import { Schema, model } from 'mongoose';
-import { IClaim, ClaimStatus } from '../types';
+import { IClaim } from '../types';
+
+enum ClaimStatus {
+  Unhandled = 'unHandled',
+  InProgress = 'inProcess',
+  Done = 'done',
+  Archived = 'archived',
+}
 
 const claimSchema = new Schema<IClaim>({
   inChargeAdminIds: [{ type: Schema.Types.ObjectId, ref: 'User' }],
-  title: String,
+  title: {
+    type: String,
+    required: true,
+  },
   status: {
     type: String,
     enum: ClaimStatus,
     default: ClaimStatus.Unhandled,
   },
   categoryIds: [{ type: Schema.Types.ObjectId, ref: 'ClaimCategory' }],
-  hasNewComment: Boolean,
-  createdAt: { type: Number, required: true, default: () => Date.now() },
+  hasNewComment: {
+    type: Boolean,
+    default: false,
+  },
+  createdAt: { type: Number, default: () => Date.now() },
 });
 
 claimSchema.pre('save', function (next) {

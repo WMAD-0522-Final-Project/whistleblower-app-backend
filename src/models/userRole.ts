@@ -1,5 +1,11 @@
 import { Schema, model } from 'mongoose';
-import { IUserRole, UserRoleOption } from '../types';
+import { IUserRole } from '../types';
+
+enum UserRoleOption {
+  General = 'general',
+  Admin = 'admin',
+  SuperAdmin = 'superAdmin',
+}
 
 const userRoleSchema = new Schema<IUserRole>({
   name: {

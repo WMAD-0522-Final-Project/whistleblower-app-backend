@@ -18,15 +18,9 @@ export interface IUser extends MongoDoc {
   updatedAt: number;
 }
 
-export enum UserRoleOption {
-  General = 'general',
-  Admin = 'admin',
-  SuperAdmin = 'superAdmin',
-}
-
 export interface IUserRole extends MongoDoc {
   _id: Types.ObjectId;
-  name: UserRoleOption;
+  name: string;
 }
 
 export interface IDepartment extends MongoDoc {
@@ -35,12 +29,7 @@ export interface IDepartment extends MongoDoc {
 }
 
 // claim
-export enum ClaimStatus {
-  Unhandled = 'unHandled',
-  InProgress = 'inProcess',
-  Done = 'done',
-  Archived = 'archived',
-}
+
 export interface IClaim extends MongoDoc {
   _id: Types.ObjectId;
   inChargeAdminIds: Types.ObjectId[];

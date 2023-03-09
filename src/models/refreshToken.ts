@@ -5,8 +5,12 @@ const refreshTokenSchema = new Schema<IRefreshToken>({
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',
+    required: true,
   },
-  token: String,
+  token: {
+    type: String,
+    required: true,
+  },
   createdAt: {
     type: Number,
     default: () => Date.now(),

@@ -2,7 +2,10 @@ import { Schema, model } from 'mongoose';
 import { IClaimCategory } from '../types';
 
 const claimCategorySchema = new Schema<IClaimCategory>({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+  },
 });
 
 const ClaimCategory = model('ClaimCategory', claimCategorySchema);

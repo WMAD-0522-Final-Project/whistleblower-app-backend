@@ -2,9 +2,20 @@ import { Schema, model } from 'mongoose';
 import { ICommentMessage } from '../types';
 
 const commentMessageSchema = new Schema<ICommentMessage>({
-  claimId: Schema.Types.ObjectId,
-  userId: Schema.Types.ObjectId,
-  message: String,
+  claimId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Claim',
+    required: true,
+  },
+  userId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
+  },
+  message: {
+    type: String,
+    required: true,
+  },
   createdAt: {
     type: Number,
     default: () => Date.now(),

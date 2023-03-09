@@ -2,7 +2,10 @@ import { Schema, model } from 'mongoose';
 import { IDepartment } from '../types';
 
 const departmentSchema = new Schema<IDepartment>({
-  name: String,
+  name: {
+    type: String,
+    required: true,
+  },
 });
 
 const Department = model('Department', departmentSchema);
