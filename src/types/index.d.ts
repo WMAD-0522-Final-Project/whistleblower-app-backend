@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { HttpStatusCode } from './enums';
 
 interface MongoDoc {
   _doc: any;
@@ -71,4 +72,10 @@ export interface IRefreshToken extends MongoDoc {
   token: string;
   createdAt: number;
   updatedAt: number;
+}
+
+// error
+interface AppErrorArgs {
+  statusCode: HttpStatusCode;
+  message: string;
 }
