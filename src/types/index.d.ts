@@ -30,7 +30,6 @@ export interface IDepartment extends MongoDoc {
 }
 
 // claim
-
 export interface IClaim extends MongoDoc {
   _id: Types.ObjectId;
   inChargeAdminIds: Types.ObjectId[];
@@ -75,7 +74,10 @@ export interface IRefreshToken extends MongoDoc {
 }
 
 // error
-interface AppErrorArgs {
+export interface AppErrorArgs {
   statusCode: HttpStatusCode;
   message: string;
+}
+export interface ValidationErrors {
+  [key: string]: string;
 }
