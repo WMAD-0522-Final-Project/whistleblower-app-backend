@@ -30,7 +30,10 @@ const userSchema = new Schema<IUser>({
         validator: specialCharactorExistence,
         msg: 'Password must contain at least one special characters (Example: !, @, %).',
       },
-      { validator: numsExistence, msg: 'uh oh' },
+      {
+        validator: numsExistence,
+        msg: 'Password must contain at least one number.',
+      },
     ],
   },
   firstName: {
