@@ -4,6 +4,7 @@ import {
   validEmailAdress,
   specialCharactorExistence,
   numsExistence,
+  upperCaseExistence,
 } from '../utils/validator';
 
 const userSchema = new Schema<IUser>({
@@ -29,6 +30,10 @@ const userSchema = new Schema<IUser>({
       {
         validator: specialCharactorExistence,
         msg: 'Password must contain at least one special characters (Example: !, @, %).',
+      },
+      {
+        validator: upperCaseExistence,
+        msg: 'Password must contain at least one uppercase charactar',
       },
       {
         validator: numsExistence,
