@@ -1,4 +1,5 @@
 import { Types } from 'mongoose';
+import { HttpStatusCode } from './enums';
 
 interface MongoDoc {
   _doc: any;
@@ -29,7 +30,6 @@ export interface IDepartment extends MongoDoc {
 }
 
 // claim
-
 export interface IClaim extends MongoDoc {
   _id: Types.ObjectId;
   inChargeAdminIds: Types.ObjectId[];
@@ -71,4 +71,13 @@ export interface IRefreshToken extends MongoDoc {
   token: string;
   createdAt: number;
   updatedAt: number;
+}
+
+// error
+export interface AppErrorArgs {
+  statusCode: HttpStatusCode;
+  message: string;
+}
+export interface ValidationErrors {
+  [key: string]: string;
 }
