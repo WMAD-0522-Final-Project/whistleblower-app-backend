@@ -8,17 +8,21 @@ import User from '../models/user';
 export const signup: RequestHandler = async (req, res, next) => {
   const { email, password, firstName, lastName } = req.body;
   try {
+    const user = await User.create({
+      email,
+      password,
+      firstName,
+      lastName,
+    });
+
     const hashedPassword = await bcrypt.hash(
       password,
       Number(process.env.SALT!)
     );
 
-    const user = await User.create({
-      email,
-      password: hashedPassword,
-      firstName,
-      lastName,
-    });
+    // to utilize mongoose validation, we have to save hashed password after saving database
+    // using update query so that validation hook will not execute again in case hashed password doesn't meet validation
+    await User.updateOne({ email }, { password: hashedPassword });
 
     const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
       expiresIn: process.env.AUTH_EXPIRESIN!,
