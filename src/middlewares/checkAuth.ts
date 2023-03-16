@@ -1,37 +1,43 @@
-// import { Types } from 'mongoose';
-// import jwt from 'jsonwebtoken';
-// import { RequestHandler } from 'express';
+import { Types } from 'mongoose';
+import jwt from 'jsonwebtoken';
+import { RequestHandler } from 'express';
+import AppError from '../error/AppError';
+import { UserJwtPayload } from '../types';
+import { HttpStatusCode } from '../types/enums';
+import User from '../models/user';
 
-// import User from '../models/user';
-// import { IUser } from '../types';
+const checkAuth: RequestHandler = async (req, res, next) => {
+  try {
+    const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader) {
+      throw new AppError({
+        message: 'Please provide authorization header.',
+        statusCode: HttpStatusCode.UNAUTHORIZED,
+      });
+    }
+    const token = authorizationHeader.split(' ')[1];
+    const decodedToken = jwt.verify(
+      token,
+      process.env.JWT_SECRET!
+    ) as UserJwtPayload;
 
-// const checkAuth: RequestHandler = async (req, res, next) => {
-//   try {
-//     const authorizationHeader = req.headers.authorization;
-//     if (!authorizationHeader) {
-//       return res.status(401).json({
-//         message: 'Please provide authorization header.',
-//       });
-//     }
-//     const token = authorizationHeader.split(' ')[1];
-//     const decodedToken = jwt.verify(token, process.env.JWT_SECRET!);
+    const user = await User.findById(decodedToken.userId);
 
-//     const user = await User.findById(decodedToken.user._id);
+    if (!user) {
+      throw new AppError({
+        message: 'Auth failed. User not exist.',
+        statusCode: HttpStatusCode.UNAUTHORIZED,
+      });
+    }
+    req.userData = {
+      ...user._doc,
+      password: undefined,
+    };
 
-//     if (!user) {
-//       return res.status(401).json({
-//         message: 'Auth failed. User not exist.',
-//       });
-//     }
-//     res.userData = {
-//       user: {
-//         ...user._doc,
-//         password: undefined,
-//       },
-//     };
+    next();
+  } catch (err) {
+    next(err);
+  }
+};
 
-//     next();
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+export default checkAuth;
