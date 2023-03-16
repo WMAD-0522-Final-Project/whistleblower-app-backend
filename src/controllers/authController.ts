@@ -25,7 +25,10 @@ export const signup: RequestHandler = async (req, res, next) => {
     });
     return res.status(HttpStatusCode.CREATED).json({
       message: 'New user registered successfully!',
-      user,
+      user: {
+        ...user._doc,
+        password: undefined,
+      },
       token,
     });
   } catch (err) {
