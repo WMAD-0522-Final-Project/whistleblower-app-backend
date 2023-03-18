@@ -1,5 +1,5 @@
 import { Types } from 'mongoose';
-import { HttpStatusCode } from './enums';
+import { HttpStatusCode, ErrorType } from './enums';
 
 interface MongoDoc {
   _doc: any;
@@ -27,6 +27,10 @@ export interface IUserRole extends MongoDoc {
 export interface IDepartment extends MongoDoc {
   _id: Types.ObjectId;
   name: string;
+}
+
+export interface UserJwtPayload {
+  userId: Types.ObjectId;
 }
 
 // claim
@@ -77,6 +81,7 @@ export interface IRefreshToken extends MongoDoc {
 export interface AppErrorArgs {
   statusCode: HttpStatusCode;
   message: string;
+  type?: ErrorType;
 }
 export interface ValidationErrors {
   [key: string]: string;

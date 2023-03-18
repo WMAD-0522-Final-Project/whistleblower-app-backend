@@ -29,15 +29,16 @@ const userSchema = new Schema<IUser>({
     validate: [
       {
         validator: specialCharactorExistence,
-        msg: 'Password must contain at least one special characters (Example: !, @, %).',
+        message:
+          'Password must contain at least one special characters (Example: !, @, %).',
       },
       {
         validator: upperCaseExistence,
-        msg: 'Password must contain at least one uppercase charactar',
+        message: 'Password must contain at least one uppercase charactar',
       },
       {
         validator: numsExistence,
-        msg: 'Password must contain at least one number.',
+        message: 'Password must contain at least one number.',
       },
     ],
   },
@@ -65,6 +66,7 @@ const userSchema = new Schema<IUser>({
 });
 
 userSchema.pre('save', function (next) {
+  console.log('hello');
   this.updatedAt = Date.now();
   next();
 });
