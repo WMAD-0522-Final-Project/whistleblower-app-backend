@@ -55,6 +55,7 @@ const userSchema = new Schema<IUser>({
     ref: 'Department',
   },
   profileImg: String,
+  permissions: [{ type: Schema.Types.ObjectId, ref: 'Permission' }],
   createdAt: {
     type: Number,
     default: () => Date.now(),
@@ -66,7 +67,6 @@ const userSchema = new Schema<IUser>({
 });
 
 userSchema.pre('save', function (next) {
-  console.log('hello');
   this.updatedAt = Date.now();
   next();
 });
