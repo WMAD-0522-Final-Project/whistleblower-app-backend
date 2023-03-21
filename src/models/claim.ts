@@ -13,12 +13,14 @@ const claimSchema = new Schema<IClaim>({
     enum: ClaimStatus,
     default: ClaimStatus.Unhandled,
   },
-  categoryIds: [{ type: Schema.Types.ObjectId, ref: 'ClaimCategory' }],
+  categories: [{ type: Schema.Types.ObjectId, ref: 'ClaimCategory' }],
   hasNewComment: {
     type: Boolean,
     default: false,
   },
+  labels: [{ type: Schema.Types.ObjectId, ref: ' Label' }],
   createdAt: { type: Number, default: () => Date.now() },
+  updatedAt: { type: Number, default: () => Date.now() },
 });
 
 claimSchema.pre('save', function (next) {

@@ -14,12 +14,18 @@ export interface IUser extends MongoDoc {
   firstName: string;
   lastName: string;
   department: Types.ObjectId;
+  permissions: Types.ObjectId[];
   profileImg: string;
   createdAt: number;
   updatedAt: number;
 }
 
 export interface IUserRole extends MongoDoc {
+  _id: Types.ObjectId;
+  name: string;
+}
+
+export interface IPermission extends MongoDoc {
   _id: Types.ObjectId;
   name: string;
 }
@@ -39,7 +45,8 @@ export interface IClaim extends MongoDoc {
   inChargeAdminIds: Types.ObjectId[];
   title: string;
   status: string;
-  categoryIds: Types.ObjectId[];
+  categories: Types.ObjectId[];
+  labels: Types.ObjectId[];
   hasNewComment: boolean;
   createdAt: number;
   updatedAt: number;
@@ -57,6 +64,25 @@ export interface ICommentMessage extends MongoDoc {
   message: string;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface ILabel extends MongoDoc {
+  _id: Types.ObjectId;
+  name: string;
+  color: string;
+  companyId: Types.ObjectId;
+}
+
+// company
+export interface ICompany extends MongoDoc {
+  _id: Types.ObjectId;
+  name: string;
+  logoImg: string;
+  themeColors: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+  };
 }
 
 // log
