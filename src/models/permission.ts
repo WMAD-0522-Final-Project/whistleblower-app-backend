@@ -8,8 +8,6 @@ const permissionSchema = new Schema<IPermission>({
   },
 });
 
-const Permission = new Schema<IPermission>({
-  name: String,
-});
+const Permission = model('Permission', permissionSchema);
 
 export default Permission;
