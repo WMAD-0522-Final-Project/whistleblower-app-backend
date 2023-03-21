@@ -9,6 +9,7 @@ interface MongoDoc {
 export interface IUser extends MongoDoc {
   _id: Types.ObjectId;
   roleId: Types.ObjectId;
+  companyId: Types.ObjectId;
   email: string;
   password: string;
   firstName: string;
@@ -42,8 +43,9 @@ export interface UserJwtPayload {
 // claim
 export interface IClaim extends MongoDoc {
   _id: Types.ObjectId;
-  inChargeAdminIds: Types.ObjectId[];
+  inChargeAdmins: Types.ObjectId[];
   title: string;
+  body: string;
   status: string;
   categories: Types.ObjectId[];
   labels: Types.ObjectId[];
