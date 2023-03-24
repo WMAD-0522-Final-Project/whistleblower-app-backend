@@ -6,13 +6,14 @@ import { HttpStatusCode } from '../types/enums';
 import User from '../models/user';
 
 export const signup: RequestHandler = async (req, res, next) => {
-  const { email, password, firstName, lastName } = req.body;
+  const { email, password, firstName, lastName, companyId } = req.body;
   try {
     const user = await User.create({
       email,
       password,
       firstName,
       lastName,
+      companyId,
     });
 
     const hashedPassword = await bcrypt.hash(

@@ -16,6 +16,7 @@ const userSchema = new Schema<IUser>({
   companyId: {
     type: Schema.Types.ObjectId,
     ref: 'Company',
+    required: true,
   },
   email: {
     type: String,

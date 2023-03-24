@@ -3,27 +3,36 @@ import { Types } from 'mongoose';
 
 import Claim from '../models/claim';
 import AppError from '../error/AppError';
-import { ClaimStatus, HttpStatusCode } from '../types/enums';
+import { HttpStatusCode } from '../types/enums';
 import Label from '../models/label';
+import ClaimCategory from '../models/claimCategory';
+import CommentMessage from '../models/commentMessage';
 
 export const getClaimList: RequestHandler = async (req, res, next) => {
-  const { status = ClaimStatus.Unhandled } = req.query;
+  const { status } = req.query;
+  const companyId = req.userData!;
   try {
-    const claims = await Claim.aggregate([
-      { $match: { status } },
-      { $project: { title: 1, createdAt: 1, inChargeAdmins: 1 } }, //could change depends on needs
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'inChargeAdmins',
-          foreignField: '_id',
-          as: 'inChargeAdmins',
-          pipeline: [
-            { $project: { profileImg: 1, firstName: 1, lastName: 1 } }, //could change depends on needs
-          ],
+    let claims;
+    if (status === undefined) {
+      claims = await Claim.find({ companyId });
+    } else {
+      claims = await Claim.aggregate([
+        { $match: { status, companyId } },
+        { $project: { title: 1, createdAt: 1, inChargeAdmins: 1 } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'inChargeAdmins',
+            foreignField: '_id',
+            as: 'inChargeAdmins',
+            pipeline: [
+              { $project: { profileImg: 1, firstName: 1, lastName: 1 } },
+            ],
+          },
         },
-      },
-    ]);
+      ]);
+    }
+
     return res.status(HttpStatusCode.OK).json({
       claims,
     });
@@ -52,7 +61,7 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
           foreignField: '_id',
           as: 'inChargeAdmins',
           pipeline: [
-            { $project: { profileImg: 1, firstName: 1, lastName: 1 } }, //could change depends on needs
+            { $project: { profileImg: 1, firstName: 1, lastName: 1 } },
           ],
         },
       },
@@ -65,7 +74,14 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
           pipeline: [{ $project: { companyId: 0 } }],
         },
       },
-      //TODO: join category
+      {
+        $lookup: {
+          from: 'claimcategories',
+          localField: 'categories',
+          foreignField: '_id',
+          as: 'categories',
+        },
+      },
     ]);
 
     return res.status(HttpStatusCode.OK).json({
@@ -77,13 +93,14 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
 };
 
 export const createClaim: RequestHandler = async (req, res, next) => {
-  const { title, body, categories, labels } = req.body;
+  const { title, body, categories } = req.body;
+  const companyId = req.userData!;
   try {
     const claim = await Claim.create({
       title,
       body,
       categories,
-      labels,
+      companyId,
     });
     return res.status(HttpStatusCode.CREATED).json({
       message: 'New claim created successfully!',
@@ -156,6 +173,22 @@ export const getLabels: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+export const findLabels: RequestHandler = async (req, res, next) => {
+  const { companyId } = req.userData!;
+  const { keyword } = req.query;
+  try {
+    const labels = await Label.find({
+      companyId,
+      name: { $regex: keyword, $options: 'i' },
+    });
+    return res.status(HttpStatusCode.OK).json({
+      labels,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 export const createLabel: RequestHandler = async (req, res, next) => {
   const { companyId } = req.userData!;
   const { name, color } = req.body;
@@ -220,29 +253,152 @@ export const deleteLabel: RequestHandler = async (req, res, next) => {
   }
 };
 
-// msssage
-// export const getMessages: RequestHandler = async (req, res, next) => {
-//   try {
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-// export const createMessage: RequestHandler = async (req, res, next) => {
-//   try {
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+//category
+export const getCategories: RequestHandler = async (req, res, next) => {
+  try {
+    const categories = await ClaimCategory.find({});
+    return res.status(HttpStatusCode.OK).json({
+      categories,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
 
-// export const updateMessage: RequestHandler = async (req, res, next) => {
-//   try {
-//   } catch (err) {
-//     next(err);
-//   }
-// };
-// export const deleteMessage: RequestHandler = async (req, res, next) => {
-//   try {
-//   } catch (err) {
-//     next(err);
-//   }
-// };
+export const createCategory: RequestHandler = async (req, res, next) => {
+  const { name } = req.body;
+  try {
+    const category = await ClaimCategory.create({
+      name,
+    });
+    res.status(HttpStatusCode.CREATED).json({
+      category,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateCategory: RequestHandler = async (req, res, next) => {
+  const { categoryId } = req.params;
+  const { name } = req.body;
+  try {
+    const category = await ClaimCategory.findById(categoryId);
+    if (!category) {
+      throw new AppError({
+        statusCode: HttpStatusCode.NOT_FOUND,
+        message: 'Claim category with provided id not found.',
+      });
+    }
+    category.name = name;
+    await category.save();
+
+    return res.status(HttpStatusCode.OK).json({
+      message: 'Claim category updated successfully!',
+      category,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteCategory: RequestHandler = async (req, res, next) => {
+  const { categoryId } = req.params;
+  try {
+    const category = await ClaimCategory.findById(categoryId);
+    if (!category) {
+      throw new AppError({
+        statusCode: HttpStatusCode.NOT_FOUND,
+        message: 'Claim category with provided id not found.',
+      });
+    }
+
+    await category.deleteOne({ _id: categoryId });
+
+    return res.status(HttpStatusCode.OK).json({
+      message: 'Claim category deleted successfully!',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+// msssage
+export const getMessages: RequestHandler = async (req, res, next) => {
+  const { claimId } = req.params;
+  try {
+    const messages = await CommentMessage.aggregate([
+      { $match: { claimId: new Types.ObjectId(claimId) } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: '_id',
+          as: 'user',
+          pipeline: [
+            {
+              $project: {
+                profileImg: 1,
+                firstName: 1,
+                lastName: 1,
+              },
+            },
+          ],
+        },
+      },
+      { $project: { userId: 0 } },
+    ]);
+    return res.status(HttpStatusCode.OK).json({
+      messages,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+export const createMessage: RequestHandler = async (req, res, next) => {
+  const { claimId } = req.params;
+  const _id = req.userData!;
+  const { message } = req.body;
+
+  try {
+    const msg = await CommentMessage.create({
+      claimId,
+      userId: _id,
+      message,
+    });
+
+    return res.status(HttpStatusCode.CREATED).json({
+      message: 'Message created successfully!',
+      msg,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const changeMessageReadStatus: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  const { claimId } = req.params;
+  const { hasNewComment } = req.body;
+  try {
+    const claim = await Claim.findById(claimId);
+    if (!claim) {
+      throw new AppError({
+        statusCode: HttpStatusCode.NOT_FOUND,
+        message: 'Claim with provided ID not found.',
+      });
+    }
+
+    claim.hasNewComment = hasNewComment;
+    await claim.save();
+
+    return res.status(HttpStatusCode.OK).json({
+      message: 'Message status for the claim updated successfully!',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
