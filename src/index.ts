@@ -6,6 +6,8 @@ import db from './config/db';
 import { errorHandler, routeNotFoundHandler } from './middlewares/handleError';
 
 import authRoute from './routes/authRoute';
+import claimRoute from './routes/claimRoute';
+import companyRoute from './routes/companyRoute';
 
 dotenv.config();
 db();
@@ -17,6 +19,8 @@ app.use(json());
 app.use(cors());
 
 app.use('/api/auth', authRoute);
+app.use('/api/claim', claimRoute);
+app.use('/api/company', companyRoute);
 
 app.use(routeNotFoundHandler);
 app.use(errorHandler);

@@ -3,8 +3,17 @@ import { IClaim } from '../types';
 import { ClaimStatus } from '../types/enums';
 
 const claimSchema = new Schema<IClaim>({
-  inChargeAdminIds: [{ type: Schema.Types.ObjectId, ref: 'User' }],
+  companyId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company',
+    required: true,
+  },
+  inChargeAdmins: [{ type: Schema.Types.ObjectId, ref: 'User' }],
   title: {
+    type: String,
+    required: true,
+  },
+  body: {
     type: String,
     required: true,
   },

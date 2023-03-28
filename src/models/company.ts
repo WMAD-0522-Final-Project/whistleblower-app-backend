@@ -5,6 +5,7 @@ const companySchema = new Schema<ICompany>({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   logoImg: String,
   themeColors: {

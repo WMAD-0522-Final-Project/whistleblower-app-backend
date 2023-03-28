@@ -13,6 +13,11 @@ const userSchema = new Schema<IUser>({
     ref: 'UserRole',
     // required: true,
   },
+  companyId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company',
+    required: true,
+  },
   email: {
     type: String,
     required: true,

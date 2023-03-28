@@ -9,6 +9,7 @@ interface MongoDoc {
 export interface IUser extends MongoDoc {
   _id: Types.ObjectId;
   roleId: Types.ObjectId;
+  companyId: Types.ObjectId;
   email: string;
   password: string;
   firstName: string;
@@ -19,6 +20,11 @@ export interface IUser extends MongoDoc {
   createdAt: number;
   updatedAt: number;
 }
+
+export type UserProfile = Pick<
+  IUser,
+  '_id' | 'profileImg' | 'firstName' | 'lastName'
+>;
 
 export interface IUserRole extends MongoDoc {
   _id: Types.ObjectId;
@@ -42,14 +48,23 @@ export interface UserJwtPayload {
 // claim
 export interface IClaim extends MongoDoc {
   _id: Types.ObjectId;
-  inChargeAdminIds: Types.ObjectId[];
+  companyId: Types.ObjectId;
+  inChargeAdmins: Types.ObjectId[];
   title: string;
+  body: string;
   status: string;
   categories: Types.ObjectId[];
   labels: Types.ObjectId[];
   hasNewComment: boolean;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface ClaimDetail
+  extends Omit<IClaim, 'inChargeAdmins' | 'labels' | 'categories'> {
+  inChargeAdmins: UserProfile[];
+  labels: Omit<ILabel, 'companyId'>[];
+  categories: IClaimCategory[];
 }
 
 export interface IClaimCategory extends MongoDoc {
