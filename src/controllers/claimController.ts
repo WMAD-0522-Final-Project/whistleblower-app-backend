@@ -7,6 +7,7 @@ import { HttpStatusCode } from '../types/enums';
 import Label from '../models/label';
 import ClaimCategory from '../models/claimCategory';
 import CommentMessage from '../models/commentMessage';
+import { ClaimDetail } from '../types';
 
 export const getClaimList: RequestHandler = async (req, res, next) => {
   const { status } = req.query;
@@ -52,37 +53,39 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
       });
     }
 
-    const claim = await Claim.aggregate([
-      { $match: { _id: new Types.ObjectId(claimId) } },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'inChargeAdmins',
-          foreignField: '_id',
-          as: 'inChargeAdmins',
-          pipeline: [
-            { $project: { profileImg: 1, firstName: 1, lastName: 1 } },
-          ],
+    const claim = (
+      (await Claim.aggregate([
+        { $match: { _id: new Types.ObjectId(claimId) } },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'inChargeAdmins',
+            foreignField: '_id',
+            as: 'inChargeAdmins',
+            pipeline: [
+              { $project: { profileImg: 1, firstName: 1, lastName: 1 } },
+            ],
+          },
         },
-      },
-      {
-        $lookup: {
-          from: 'labels',
-          localField: 'labels',
-          foreignField: '_id',
-          as: 'labels',
-          pipeline: [{ $project: { companyId: 0 } }],
+        {
+          $lookup: {
+            from: 'labels',
+            localField: 'labels',
+            foreignField: '_id',
+            as: 'labels',
+            pipeline: [{ $project: { companyId: 0 } }],
+          },
         },
-      },
-      {
-        $lookup: {
-          from: 'claimcategories',
-          localField: 'categories',
-          foreignField: '_id',
-          as: 'categories',
+        {
+          $lookup: {
+            from: 'claimcategories',
+            localField: 'categories',
+            foreignField: '_id',
+            as: 'categories',
+          },
         },
-      },
-    ]);
+      ])) as ClaimDetail[]
+    )[0];
 
     return res.status(HttpStatusCode.OK).json({
       claim,

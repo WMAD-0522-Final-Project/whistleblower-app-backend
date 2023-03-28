@@ -21,6 +21,11 @@ export interface IUser extends MongoDoc {
   updatedAt: number;
 }
 
+export type UserProfile = Pick<
+  IUser,
+  '_id' | 'profileImg' | 'firstName' | 'lastName'
+>;
+
 export interface IUserRole extends MongoDoc {
   _id: Types.ObjectId;
   name: string;
@@ -53,6 +58,13 @@ export interface IClaim extends MongoDoc {
   hasNewComment: boolean;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface ClaimDetail
+  extends Omit<IClaim, 'inChargeAdmins' | 'labels' | 'categories'> {
+  inChargeAdmins: UserProfile[];
+  labels: Omit<ILabel, 'companyId'>[];
+  categories: IClaimCategory[];
 }
 
 export interface IClaimCategory extends MongoDoc {
