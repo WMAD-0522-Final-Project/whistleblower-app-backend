@@ -1,5 +1,6 @@
 import { ErrorRequestHandler, RequestHandler, Response } from 'express';
 import mongoose from 'mongoose';
+import multer from 'multer';
 import AppError from '../error/AppError';
 import { ValidationErrors } from '../types';
 import { HttpStatusCode, ErrorType } from '../types/enums';
@@ -40,7 +41,12 @@ const handleMongooseValidationError = (
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error('error: ', err);
 
-  if (err.code) return handleMongooseServerError(err, res);
+  if (err instanceof multer.MulterError) {
+    res.status(HttpStatusCode.BAD_REQUEST).json({
+      message: 'Multer Error occured.',
+      err,
+    });
+  }
 
   if (err instanceof mongoose.Error.ValidationError)
     return handleMongooseValidationError(err, res);
@@ -51,6 +57,8 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
       type: err.type,
     });
   }
+
+  if (err.code) return handleMongooseServerError(err, res);
 
   return res.status(HttpStatusCode.INTERNAL_SERVER_ERROR).json({
     message: 'Something went wrong.',
