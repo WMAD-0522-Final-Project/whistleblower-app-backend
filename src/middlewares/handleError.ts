@@ -42,7 +42,7 @@ export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error('error: ', err);
 
   if (err instanceof multer.MulterError) {
-    res.status(HttpStatusCode.BAD_REQUEST).json({
+    return res.status(HttpStatusCode.BAD_REQUEST).json({
       message: 'Multer Error occured.',
       err,
     });
