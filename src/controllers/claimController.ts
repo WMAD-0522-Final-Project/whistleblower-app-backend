@@ -11,14 +11,14 @@ import { ClaimDetail } from '../types';
 
 export const getClaimList: RequestHandler = async (req, res, next) => {
   const { status } = req.query;
-  const companyId = req.userData!;
+  const { companyId } = req.userData!;
   try {
     let claims;
     if (status === undefined) {
       claims = await Claim.find({ companyId });
     } else {
       claims = await Claim.aggregate([
-        { $match: { status, companyId } },
+        { $match: { status, companyId: new Types.ObjectId(companyId) } },
         { $project: { title: 1, createdAt: 1, inChargeAdmins: 1 } },
         {
           $lookup: {
@@ -97,7 +97,7 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
 
 export const createClaim: RequestHandler = async (req, res, next) => {
   const { title, body, categories } = req.body;
-  const companyId = req.userData!;
+  const { companyId } = req.userData!;
   try {
     const claim = await Claim.create({
       title,
@@ -360,13 +360,13 @@ export const getMessages: RequestHandler = async (req, res, next) => {
 };
 export const createMessage: RequestHandler = async (req, res, next) => {
   const { claimId } = req.params;
-  const _id = req.userData!;
+  const { _id: userId } = req.userData!;
   const { message } = req.body;
 
   try {
     const msg = await CommentMessage.create({
       claimId,
-      userId: _id,
+      userId,
       message,
     });
 
