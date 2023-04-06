@@ -14,11 +14,18 @@ export interface IUser extends MongoDoc {
   password: string;
   firstName: string;
   lastName: string;
-  department: Types.ObjectId;
+  departmentId: Types.ObjectId;
   permissions: Types.ObjectId[];
   profileImg: string;
   createdAt: number;
   updatedAt: number;
+}
+
+export interface UserDetail
+  extends Omit<IUser, 'password' | 'roleId' | 'permissions' | 'departmentId'> {
+  role: IUserRole;
+  permissions: IPermission;
+  department: Omit<IDepartment, 'companyId'>;
 }
 
 export type UserProfile = Pick<
@@ -39,6 +46,7 @@ export interface IPermission extends MongoDoc {
 export interface IDepartment extends MongoDoc {
   _id: Types.ObjectId;
   name: string;
+  companyId: Types.ObjectId;
 }
 
 export interface UserJwtPayload {
@@ -98,6 +106,10 @@ export interface ICompany extends MongoDoc {
     secondary: string;
     tertiary: string;
   };
+}
+
+export interface CompanyDetail extends ICompany {
+  departments: Omit<IDepartment, 'companyId'>[];
 }
 
 // log

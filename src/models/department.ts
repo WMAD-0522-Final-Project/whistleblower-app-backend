@@ -6,6 +6,10 @@ const departmentSchema = new Schema<IDepartment>({
     type: String,
     required: true,
   },
+  companyId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company',
+  },
 });
 
 const Department = model('Department', departmentSchema);
