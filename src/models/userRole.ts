@@ -6,7 +6,7 @@ const userRoleSchema = new Schema<IUserRole>({
   name: {
     type: String,
     enum: UserRoleOption,
-    default: UserRoleOption.General,
+    default: UserRoleOption.GENERAL,
   },
 });
 

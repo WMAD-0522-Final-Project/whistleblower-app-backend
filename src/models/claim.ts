@@ -20,7 +20,7 @@ const claimSchema = new Schema<IClaim>({
   status: {
     type: String,
     enum: ClaimStatus,
-    default: ClaimStatus.Unhandled,
+    default: ClaimStatus.UNHANDLED,
   },
   categories: [{ type: Schema.Types.ObjectId, ref: 'ClaimCategory' }],
   hasNewComment: {
