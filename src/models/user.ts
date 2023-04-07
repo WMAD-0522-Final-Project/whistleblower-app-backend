@@ -55,7 +55,7 @@ const userSchema = new Schema<IUser>({
     type: String,
     required: true,
   },
-  department: {
+  departmentId: {
     type: Schema.Types.ObjectId,
     ref: 'Department',
   },

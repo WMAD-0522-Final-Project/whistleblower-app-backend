@@ -72,3 +72,8 @@ export const login: RequestHandler = async (req, res, next) => {
     next(err);
   }
 };
+
+export const logout: RequestHandler = (req, res, next) => {
+  try {
+  } catch (err) {}
+};

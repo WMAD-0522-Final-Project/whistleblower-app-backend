@@ -1,14 +1,20 @@
 export enum ClaimStatus {
-  Unhandled = 'unHandled',
-  InProcess = 'inProcess',
-  Done = 'done',
-  Archived = 'archived',
+  UNHANDLED = 'unHandled',
+  IN_PROCESS = 'inProcess',
+  DONE = 'done',
+  ARCHIVED = 'archived',
 }
 
 export enum UserRoleOption {
-  General = 'general',
-  Admin = 'admin',
-  SuperAdmin = 'superAdmin',
+  GENERAL = 'general',
+  ADMIN = 'admin',
+}
+
+export enum UserPermissionOption {
+  SYSTEM_ADMINISTRATOR = 'systemAdministrator',
+  CASE_MANAGEMENT = 'caseManagement',
+  REPORT_VIEWER = 'reportViewer',
+  USER_MANAGEMENT = 'userManagement',
 }
 
 // error

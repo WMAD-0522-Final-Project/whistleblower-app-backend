@@ -1,0 +1,14 @@
+[
+    {
+        "name": "systemAdministrator"
+    },
+    {
+        "name": "caseManagement"
+    },
+    {
+        "name": "reportViewer"
+    },
+    {
+        "name": "userManagement"
+    }
+]

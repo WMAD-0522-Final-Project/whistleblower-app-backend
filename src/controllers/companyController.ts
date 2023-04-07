@@ -1,5 +1,7 @@
 import { RequestHandler } from 'express';
+import { Types } from 'mongoose';
 import AppError from '../error/AppError';
+import { CompanyDetail } from '../types';
 import { HttpStatusCode } from '../types/enums';
 import Company from '../models/company';
 import uploadFile from '../utils/uploadFile';
@@ -21,7 +23,25 @@ export const createCompany: RequestHandler = async (req, res, next) => {
 export const getCompanyInfo: RequestHandler = async (req, res, next) => {
   const { companyId } = req.userData!;
   try {
-    const company = await Company.findById(companyId);
+    const company = (
+      (await Company.aggregate([
+        {
+          $match: {
+            _id: new Types.ObjectId(companyId),
+          },
+        },
+        {
+          $lookup: {
+            from: 'departments',
+            foreignField: 'companyId',
+            localField: '_id',
+            as: 'departments',
+            pipeline: [{ $project: { companyId: 0 } }],
+          },
+        },
+      ])) as CompanyDetail[]
+    )[0];
+
     if (!company) {
       throw new AppError({
         statusCode: HttpStatusCode.NOT_FOUND,
@@ -82,7 +102,7 @@ export const updateLogoImg: RequestHandler = async (req, res, next) => {
     if (!req.file) {
       throw new AppError({
         statusCode: HttpStatusCode.BAD_REQUEST,
-        message: 'Please upload profile image.',
+        message: 'Please upload logo image.',
       });
     }
 
