@@ -3,6 +3,10 @@ import { IClaim } from '../types';
 import { ClaimStatus } from '../types/enums';
 
 const claimSchema = new Schema<IClaim>({
+  createUserId: {
+    type: Schema.Types.ObjectId,
+    ref: 'User',
+  },
   companyId: {
     type: Schema.Types.ObjectId,
     ref: 'Company',

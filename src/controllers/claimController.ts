@@ -7,7 +7,7 @@ import { HttpStatusCode } from '../types/enums';
 import Label from '../models/label';
 import ClaimCategory from '../models/claimCategory';
 import CommentMessage from '../models/commentMessage';
-import { ClaimDetail } from '../types';
+import { ClaimDetail, IClaim } from '../types';
 
 export const getClaimList: RequestHandler = async (req, res, next) => {
   const { status } = req.query;
@@ -97,14 +97,27 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
 
 export const createClaim: RequestHandler = async (req, res, next) => {
   const { title, body, categories } = req.body;
-  const { companyId } = req.userData!;
+  const { isAnonimous } = req.query;
+  const { companyId, _id: createUserId } = req.userData!;
   try {
-    const claim = await Claim.create({
-      title,
-      body,
-      categories,
-      companyId,
-    });
+    let claim: IClaim;
+    if (isAnonimous) {
+      claim = await Claim.create({
+        title,
+        body,
+        categories,
+        companyId,
+      });
+    } else {
+      claim = await Claim.create({
+        title,
+        body,
+        categories,
+        companyId,
+        createUserId,
+      });
+    }
+
     return res.status(HttpStatusCode.CREATED).json({
       message: 'New claim created successfully!',
       claim,
