@@ -57,6 +57,7 @@ export interface UserJwtPayload {
 export interface IClaim extends MongoDoc {
   _id: Types.ObjectId;
   companyId: Types.ObjectId;
+  createUserId?: Types.ObjectId;
   inChargeAdmins: Types.ObjectId[];
   title: string;
   body: string;
