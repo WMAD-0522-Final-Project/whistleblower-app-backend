@@ -5,6 +5,13 @@ import AppError from '../error/AppError';
 import { HttpStatusCode } from '../types/enums';
 import User from '../models/user';
 
+export const verifyToken: RequestHandler = async (req, res, next) => {
+  // token gets verified in middleware
+  return res.status(HttpStatusCode.OK).json({
+    message: 'Token successfully verified.',
+  });
+};
+
 export const signup: RequestHandler = async (req, res, next) => {
   const { email, password, firstName, lastName, companyId } = req.body;
   try {
