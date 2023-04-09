@@ -9,6 +9,7 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
   // token gets verified in middleware
   return res.status(HttpStatusCode.OK).json({
     message: 'Token successfully verified.',
+    user: req.userData!,
   });
 };
 
