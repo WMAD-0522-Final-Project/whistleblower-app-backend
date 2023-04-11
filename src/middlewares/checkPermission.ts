@@ -4,7 +4,7 @@ import Permission from '../models/permission';
 import { IPermission } from '../types';
 import { HttpStatusCode, UserPermissionOption } from '../types/enums';
 
-// these middlewares must be used after checkAuth middleware so we can extract userData from reqest object
+// this middlewares must be used after checkAuth middleware so we can extract userData from reqest object
 
 const checkPermission = (
   permissionName: UserPermissionOption
