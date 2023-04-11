@@ -11,9 +11,9 @@ export enum UserRoleOption {
 }
 
 export enum UserPermissionOption {
-  SYSTEM_ADMINISTRATOR = 'systemAdministrator',
+  SYSTEM_MANAGEMENT = 'systemManagement',
   CASE_MANAGEMENT = 'caseManagement',
-  REPORT_VIEWER = 'reportViewer',
+  REPORT_VIEWING = 'reportViewing',
   USER_MANAGEMENT = 'userManagement',
 }
 
