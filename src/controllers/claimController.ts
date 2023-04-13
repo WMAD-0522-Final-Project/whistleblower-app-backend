@@ -79,9 +79,9 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
         {
           $lookup: {
             from: 'claimcategories',
-            localField: 'categories',
+            localField: 'category',
             foreignField: '_id',
-            as: 'categories',
+            as: 'category',
           },
         },
       ])) as ClaimDetail[]
@@ -96,7 +96,7 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
 };
 
 export const createClaim: RequestHandler = async (req, res, next) => {
-  const { title, body, categories } = req.body;
+  const { title, body, category } = req.body;
   const { isAnonymous } = req.query;
   const { companyId, _id: createUserId } = req.userData!;
   try {
@@ -105,14 +105,14 @@ export const createClaim: RequestHandler = async (req, res, next) => {
       claim = await Claim.create({
         title,
         body,
-        categories,
+        category,
         companyId,
       });
     } else {
       claim = await Claim.create({
         title,
         body,
-        categories,
+        category,
         companyId,
         createUserId,
       });
