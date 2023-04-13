@@ -97,11 +97,11 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
 
 export const createClaim: RequestHandler = async (req, res, next) => {
   const { title, body, categories } = req.body;
-  const { isAnonimous } = req.query;
+  const { isAnonymous } = req.query;
   const { companyId, _id: createUserId } = req.userData!;
   try {
     let claim: IClaim;
-    if (isAnonimous) {
+    if (isAnonymous) {
       claim = await Claim.create({
         title,
         body,
