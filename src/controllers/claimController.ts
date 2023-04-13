@@ -101,7 +101,7 @@ export const createClaim: RequestHandler = async (req, res, next) => {
   const { companyId, _id: createUserId } = req.userData!;
   try {
     let claim: IClaim;
-    if (isAnonymous) {
+    if (JSON.parse(isAnonymous as string)) {
       claim = await Claim.create({
         title,
         body,
