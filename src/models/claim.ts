@@ -26,7 +26,7 @@ const claimSchema = new Schema<IClaim>({
     enum: ClaimStatus,
     default: ClaimStatus.UNHANDLED,
   },
-  categories: [{ type: Schema.Types.ObjectId, ref: 'ClaimCategory' }],
+  category: { type: Schema.Types.ObjectId, ref: 'ClaimCategory' },
   hasNewComment: {
     type: Boolean,
     default: false,

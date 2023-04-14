@@ -62,7 +62,7 @@ export interface IClaim extends MongoDoc {
   title: string;
   body: string;
   status: string;
-  categories: Types.ObjectId[];
+  category: Types.ObjectId;
   labels: Types.ObjectId[];
   hasNewComment: boolean;
   createdAt: number;
@@ -70,10 +70,10 @@ export interface IClaim extends MongoDoc {
 }
 
 export interface ClaimDetail
-  extends Omit<IClaim, 'inChargeAdmins' | 'labels' | 'categories'> {
+  extends Omit<IClaim, 'inChargeAdmins' | 'labels' | 'category'> {
   inChargeAdmins: UserProfile[];
   labels: Omit<ILabel, 'companyId'>[];
-  categories: IClaimCategory[];
+  category: IClaimCategory;
 }
 
 export interface IClaimCategory extends MongoDoc {
