@@ -5,6 +5,7 @@ const labelSchema = new Schema<ILabel>({
   name: {
     type: String,
     required: true,
+    unique: true,
   },
   color: {
     type: String,
