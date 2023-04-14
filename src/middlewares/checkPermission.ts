@@ -14,7 +14,7 @@ const checkPermission = (
     try {
       const userPermissions = (await Permission.find({
         _id: { $in: permissions },
-      }).select('name')) as Omit<IPermission, '_id'>[];
+      })) as IPermission[];
 
       const permissionNames = userPermissions.map((permission) => {
         return permission.name;
