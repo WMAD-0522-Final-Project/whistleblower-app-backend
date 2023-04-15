@@ -6,8 +6,9 @@ import AppError from '../error/AppError';
 import User from '../models/user';
 import { HttpStatusCode, UserRoleOption } from '../types/enums';
 import uploadFile from '../utils/uploadFile';
-import { SERVER_TMP_DIRECTORY } from '../config/constants';
+import { APP_NAME, SERVER_TMP_DIRECTORY } from '../config/constants';
 import { getPermissionIds, getRoleId } from '../utils/getId';
+import sendEmail from '../utils/sendEmail';
 import { UserDetail } from '../types';
 
 export const createNewUser: RequestHandler = async (req, res, next) => {
@@ -191,6 +192,17 @@ export const updateUserPasssword: RequestHandler = async (req, res, next) => {
     // using update query so that validation hook will not execute again in case hashed password doesn't meet validation
     // TODO: this could be change by removing mongoose password validation and validate here
     await User.updateOne({ _id: userId }, { password: hashedPassword });
+
+    const subject = 'New password is issued';
+
+    const mailBody = `
+    <h2>Your password is changed.</h2>
+    <p>Hello, ${user.firstName} ${user.lastName}</p>
+    <p>This is your new password for ${APP_NAME}</p>
+    <p><b>${password}</b></p>
+    `;
+
+    await sendEmail(user.email, subject, mailBody);
 
     res.status(HttpStatusCode.OK).json({
       message: 'User password updated successfully!',
