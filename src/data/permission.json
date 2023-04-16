@@ -1,12 +1,12 @@
 [
     {
-        "name": "systemAdministrator"
+        "name": "systemManagement"
     },
     {
         "name": "caseManagement"
     },
     {
-        "name": "reportViewer"
+        "name": "reportViewing"
     },
     {
         "name": "userManagement"
