@@ -1,6 +1,6 @@
 import nodemailer from 'nodemailer';
-import emailAuthConfig from '../config/emai';
-import oauth2Client from '../config/googleapi';
+import emailAuthConfig from '../config/email';
+import oauth2Client from '../config/googleApi';
 
 const sendEmail = async (
   recepientEmail: string,
