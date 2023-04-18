@@ -6,6 +6,7 @@ import { HttpStatusCode } from '../types/enums';
 import Company from '../models/company';
 import uploadFile from '../utils/uploadFile';
 import { SERVER_TMP_DIRECTORY } from '../config/constants';
+import Department from '../models/department';
 
 export const createCompany: RequestHandler = async (req, res, next) => {
   const { name, logoImg, themeColors } = req.body;
@@ -117,6 +118,45 @@ export const updateLogoImg: RequestHandler = async (req, res, next) => {
 
     return res.status(HttpStatusCode.OK).json({
       message: 'Company Logo updated successfully!',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const createDepartment: RequestHandler = async (req, res, next) => {
+  const { companyId } = req.userData!;
+  const { name } = req.body;
+  try {
+    const department = await Department.create({
+      name,
+      companyId,
+    });
+    return res.status(HttpStatusCode.OK).json({
+      message: 'Department created successfully!',
+      department,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const deleteDepartment: RequestHandler = async (req, res, next) => {
+  const { companyId } = req.userData!;
+
+  try {
+    const department = await Department.findOne({ companyId });
+    if (!department) {
+      throw new AppError({
+        statusCode: HttpStatusCode.NOT_FOUND,
+        message: 'Department with provided id not found.',
+      });
+    }
+
+    await department.deleteOne({ companyId });
+
+    return res.status(HttpStatusCode.OK).json({
+      message: 'Department deleted successfully!',
     });
   } catch (err) {
     next(err);
