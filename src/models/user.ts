@@ -1,5 +1,6 @@
 import { Schema, model } from 'mongoose';
 import { IUser } from '../types';
+import { inquiryOption } from '../types/enums';
 import {
   validEmailAdress,
   specialCharactorExistence,
@@ -60,6 +61,10 @@ const userSchema = new Schema<IUser>({
     ref: 'Department',
   },
   profileImg: String,
+  inquiry: {
+    type: String,
+    enum: inquiryOption,
+  },
   permissions: [{ type: Schema.Types.ObjectId, ref: 'Permission' }],
   createdAt: {
     type: Number,

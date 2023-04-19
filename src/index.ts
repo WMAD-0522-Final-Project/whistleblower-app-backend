@@ -9,6 +9,7 @@ import authRoute from './routes/authRoute';
 import userRoute from './routes/userRoutes';
 import claimRoute from './routes/claimRoute';
 import companyRoute from './routes/companyRoute';
+import contactRoute from './routes/contactRoute';
 
 dotenv.config();
 db();
@@ -23,6 +24,7 @@ app.use('/api/auth', authRoute);
 app.use('/api/user', userRoute);
 app.use('/api/claim', claimRoute);
 app.use('/api/company', companyRoute);
+app.use('/api/contact', contactRoute);
 
 app.use(routeNotFoundHandler);
 app.use(errorHandler);

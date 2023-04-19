@@ -17,6 +17,7 @@ export interface IUser extends MongoDoc {
   departmentId: Types.ObjectId;
   permissions: Types.ObjectId[];
   profileImg: string;
+  inquiry: inquiryType;
   createdAt: number;
   updatedAt: number;
 }
