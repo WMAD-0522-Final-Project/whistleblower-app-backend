@@ -21,9 +21,6 @@ export const contactAdmin: RequestHandler = async (req, res, next) => {
       });
     }
 
-    contactedUser.inquiry = inquiryType;
-    await contactedUser.save();
-
     let adminTeams: IUser[];
 
     if (
@@ -49,6 +46,9 @@ export const contactAdmin: RequestHandler = async (req, res, next) => {
         message: 'Please provide valid iuquiry type.',
       });
     }
+
+    contactedUser.inquiry = inquiryType;
+    await contactedUser.save();
 
     if (adminTeams.length > 0) {
       const adminTeamsEmail = adminTeams.map((admin) => {
