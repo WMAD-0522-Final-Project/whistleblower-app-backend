@@ -4,6 +4,8 @@ import {
   getCompanyInfo,
   updateCompanyInfo,
   updateLogoImg,
+  createDepartment,
+  deleteDepartment,
 } from '../controllers/companyController';
 import checkAuth from '../middlewares/checkAuth';
 import checkPermission from '../middlewares/checkPermission';
@@ -32,6 +34,18 @@ router.put(
   },
   checkPermission(UserPermissionOption.SYSTEM_MANAGEMENT),
   updateLogoImg
+);
+
+// department
+router.post(
+  '/department/create',
+  checkPermission(UserPermissionOption.SYSTEM_MANAGEMENT),
+  createDepartment
+);
+router.delete(
+  '/department/delete',
+  checkPermission(UserPermissionOption.SYSTEM_MANAGEMENT),
+  deleteDepartment
 );
 
 export default router;

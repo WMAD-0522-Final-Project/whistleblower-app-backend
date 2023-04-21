@@ -17,6 +17,14 @@ export enum UserPermissionOption {
   USER_MANAGEMENT = 'userManagement',
 }
 
+// contacts
+export enum inquiryOption {
+  FORGOT_PASSWORD = 'Forgot Password',
+  CHANGE_USER_INFORMATION = 'Change User Information',
+  SYSTEM_ISSUE = 'System Issue',
+  OTHERS = 'Others',
+}
+
 // error
 export enum HttpStatusCode {
   OK = 200,
