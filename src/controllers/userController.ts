@@ -9,7 +9,8 @@ import uploadFile from '../utils/uploadFile';
 import { APP_NAME, SERVER_TMP_DIRECTORY } from '../config/constants';
 import { getPermissionIds, getRoleId } from '../utils/getId';
 import sendEmail from '../utils/sendEmail';
-import { UserDetail } from '../types';
+import { UserDetail, UserRoleOptionType } from '../types';
+import { match } from 'assert';
 
 export const createNewUser: RequestHandler = async (req, res, next) => {
   const { companyId } = req.userData!;
@@ -71,6 +72,50 @@ export const createNewUser: RequestHandler = async (req, res, next) => {
         password: undefined,
       },
       token,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const getUserList: RequestHandler = async (req, res, next) => {
+  const { role } = req.query;
+  try {
+    const roleId = await getRoleId(role as UserRoleOptionType);
+    const users = await User.aggregate([
+      { $match: { roleId } },
+      {
+        $lookup: {
+          from: 'permissions',
+          foreignField: '_id',
+          localField: 'permissions',
+          as: 'permissions',
+        },
+      },
+      {
+        $lookup: {
+          from: 'departments',
+          localField: 'departmentId',
+          foreignField: '_id',
+          as: 'department',
+          pipeline: [{ $project: { companyId: 0 } }],
+        },
+      },
+      { $unwind: '$department' },
+      {
+        $project: {
+          password: 0,
+          inquiry: 0,
+          createdAt: 0,
+          updatedAt: 0,
+          companyId: 0,
+          roleId: 0,
+        },
+      },
+    ]);
+
+    return res.status(HttpStatusCode.OK).json({
+      users,
     });
   } catch (err) {
     next(err);

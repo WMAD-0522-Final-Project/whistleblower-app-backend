@@ -4,6 +4,7 @@ import {
   UserRoleOption,
   UserPermissionOption,
 } from '../types/enums';
+import { UserRoleOptionType } from '../types';
 import AppError from '../error/AppError';
 import Permission from '../models/permission';
 import UserRole from '../models/userRole';
@@ -37,8 +38,10 @@ export const getPermissionIds = async (permissions: UserPermissionOption[]) => {
   return permissionIds;
 };
 
-export const getRoleId = async (roleName: UserRoleOption) => {
-  if (!Object.values(UserRoleOption).includes(roleName)) {
+export const getRoleId = async (roleName: UserRoleOptionType) => {
+  if (
+    !(Object.values(UserRoleOption) as UserRoleOptionType[]).includes(roleName)
+  ) {
     throw new AppError({
       statusCode: HttpStatusCode.BAD_REQUEST,
       message: 'Please provide valid role.',

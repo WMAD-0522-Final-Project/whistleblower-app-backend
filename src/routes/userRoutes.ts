@@ -2,6 +2,7 @@ import express from 'express';
 import {
   createNewUser,
   getUserInfo,
+  getUserList,
   updateUserInfo,
   updateUserPasssword,
   updateUserProfileImg,
@@ -23,6 +24,7 @@ router.post(
   checkPermission(UserPermissionOption.USER_MANAGEMENT),
   createNewUser
 );
+router.get('/list', getUserList);
 router.get('/:userId/info', getUserInfo);
 
 router.put(
