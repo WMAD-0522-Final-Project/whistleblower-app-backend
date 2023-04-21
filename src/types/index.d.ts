@@ -39,6 +39,8 @@ export interface IUserRole extends MongoDoc {
   name: string;
 }
 
+export type UserRoleOptionType = `${UserRoleOption}`;
+
 export interface IPermission extends MongoDoc {
   _id: Types.ObjectId;
   name: string;
