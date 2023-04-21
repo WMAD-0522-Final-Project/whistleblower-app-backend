@@ -143,13 +143,14 @@ export const createDepartment: RequestHandler = async (req, res, next) => {
 
 export const deleteDepartment: RequestHandler = async (req, res, next) => {
   const { companyId } = req.userData!;
+  const { name } = req.body;
 
   try {
-    const department = await Department.findOne({ companyId });
+    const department = await Department.findOne({ name, companyId });
     if (!department) {
       throw new AppError({
         statusCode: HttpStatusCode.NOT_FOUND,
-        message: 'Department with provided id not found.',
+        message: 'Department with provided id or name not found.',
       });
     }
 
