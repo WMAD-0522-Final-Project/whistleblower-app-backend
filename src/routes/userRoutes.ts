@@ -7,6 +7,7 @@ import {
   updateUserPasssword,
   updateUserProfileImg,
   deleteUser,
+  getContactedUser,
 } from '../controllers/userController';
 import checkAuth from '../middlewares/checkAuth';
 import checkPermission from '../middlewares/checkPermission';
@@ -26,6 +27,7 @@ router.post(
 );
 router.get('/list', getUserList);
 router.get('/:userId/info', getUserInfo);
+router.get('/contacted/list', getContactedUser);
 
 router.put(
   '/:userId/info/update',
