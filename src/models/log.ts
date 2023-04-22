@@ -6,6 +6,10 @@ const logSchema = new Schema<ILog>({
     type: String,
     required: true,
   },
+  companyId: {
+    type: Schema.Types.ObjectId,
+    ref: 'Company',
+  },
   userId: {
     type: Schema.Types.ObjectId,
     ref: 'User',

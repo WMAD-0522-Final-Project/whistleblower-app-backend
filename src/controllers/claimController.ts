@@ -8,6 +8,7 @@ import Label from '../models/label';
 import ClaimCategory from '../models/claimCategory';
 import CommentMessage from '../models/commentMessage';
 import { ClaimDetail, IClaim } from '../types';
+import Log from '../models/log';
 
 export const getClaimList: RequestHandler = async (req, res, next) => {
   const { status } = req.query;
@@ -154,6 +155,7 @@ export const assignInChargeAdmin: RequestHandler = async (req, res, next) => {
 export const changeClaimStatus: RequestHandler = async (req, res, next) => {
   const { claimId } = req.params;
   const { status } = req.body;
+  const { _id: userId, firstName, lastName, companyId } = req.userData!;
 
   try {
     const claim = await Claim.findById(claimId);
@@ -163,8 +165,17 @@ export const changeClaimStatus: RequestHandler = async (req, res, next) => {
         message: 'Claim with provided id not found.',
       });
     }
+    let prevStatus = claim.status;
     claim.status = status;
     await claim.save();
+
+    const logContent = `${firstName} ${lastName} changed status of claim(id: ${claim._id}) from ${prevStatus} to ${claim.status}`;
+
+    await Log.create({
+      userId,
+      companyId,
+      content: logContent,
+    });
 
     return res.status(HttpStatusCode.OK).json({
       message: 'Claim status updated successfully!',
