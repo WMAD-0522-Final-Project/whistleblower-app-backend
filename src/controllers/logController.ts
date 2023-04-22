@@ -10,7 +10,8 @@ export const getLogs: RequestHandler = async (req, res, next) => {
     const logs = await Log.find({ companyId })
       .select({ content: 1, createdAt: 1 })
       .skip(+page * LOGS_PER_PAGE)
-      .limit(LOGS_PER_PAGE);
+      .limit(LOGS_PER_PAGE)
+      .sort({ createdAt: -1 });
 
     res.status(HttpStatusCode.OK).json({
       logs,
