@@ -155,7 +155,7 @@ export const assignInChargeAdmin: RequestHandler = async (req, res, next) => {
 export const changeClaimStatus: RequestHandler = async (req, res, next) => {
   const { claimId } = req.params;
   const { status } = req.body;
-  const { _id: userId, firstName, lastName } = req.userData!;
+  const { _id: userId, firstName, lastName, companyId } = req.userData!;
 
   try {
     const claim = await Claim.findById(claimId);
@@ -173,6 +173,7 @@ export const changeClaimStatus: RequestHandler = async (req, res, next) => {
 
     await Log.create({
       userId,
+      companyId,
       content: logContent,
     });
 
