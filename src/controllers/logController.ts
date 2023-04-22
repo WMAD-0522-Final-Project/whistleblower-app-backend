@@ -8,6 +8,7 @@ export const getLogs: RequestHandler = async (req, res, next) => {
   const LOGS_PER_PAGE = 25;
   try {
     const logs = await Log.find({ companyId })
+      .select({ content: 1, createdAt: 1 })
       .skip(+page * LOGS_PER_PAGE)
       .limit(LOGS_PER_PAGE);
 
