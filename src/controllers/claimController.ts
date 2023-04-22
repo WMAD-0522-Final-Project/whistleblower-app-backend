@@ -373,6 +373,7 @@ export const getMessages: RequestHandler = async (req, res, next) => {
           ],
         },
       },
+      { $unwind: '$user' },
       { $project: { userId: 0 } },
     ]);
     return res.status(HttpStatusCode.OK).json({
