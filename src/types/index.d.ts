@@ -119,6 +119,7 @@ export interface ILog extends MongoDoc {
   _id: Types.ObjectId;
   content: string;
   userId: Types.ObjectId;
+  companyId: Types.ObjectId;
   createdAt: number;
   updatedAt: number;
 }
