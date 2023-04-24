@@ -32,6 +32,7 @@ const claimSchema = new Schema<IClaim>({
     default: false,
   },
   labels: [{ type: Schema.Types.ObjectId, ref: 'Label' }],
+  isAnonymous: Boolean,
   createdAt: { type: Number, default: () => Date.now() },
   updatedAt: { type: Number, default: () => Date.now() },
 });

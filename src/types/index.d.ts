@@ -68,6 +68,7 @@ export interface IClaim extends MongoDoc {
   category: Types.ObjectId;
   labels: Types.ObjectId[];
   hasNewComment: boolean;
+  isAnonymous: boolean;
   createdAt: number;
   updatedAt: number;
 }

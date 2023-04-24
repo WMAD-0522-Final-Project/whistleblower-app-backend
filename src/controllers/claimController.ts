@@ -3,24 +3,32 @@ import { Types } from 'mongoose';
 
 import Claim from '../models/claim';
 import AppError from '../error/AppError';
-import { HttpStatusCode } from '../types/enums';
+import { HttpStatusCode, UserRoleOption } from '../types/enums';
 import Label from '../models/label';
 import ClaimCategory from '../models/claimCategory';
 import CommentMessage from '../models/commentMessage';
 import { ClaimDetail, IClaim } from '../types';
 import Log from '../models/log';
+import UserRole from '../models/userRole';
 
 export const getClaimList: RequestHandler = async (req, res, next) => {
   const { status } = req.query;
-  const { companyId } = req.userData!;
+  const { _id: userId, companyId, roleId } = req.userData!;
   try {
-    const matchCondition = status
-      ? { status, companyId: new Types.ObjectId(companyId) }
-      : { companyId: new Types.ObjectId(companyId) };
+    const role = await UserRole.findById(roleId);
+    const matchCondition: {
+      companyId: Types.ObjectId;
+      status?: string;
+      createUserId?: Types.ObjectId;
+    } = { companyId: new Types.ObjectId(companyId) };
+
+    if (status) matchCondition.status = status as string;
+    if (role!.name === UserRoleOption.GENERAL)
+      matchCondition.createUserId = new Types.ObjectId(userId);
 
     const claims = await Claim.aggregate([
       { $match: matchCondition },
-      { $project: { title: 1, createdAt: 1, inChargeAdmins: 1 } },
+      { $project: { title: 1, createdAt: 1, inChargeAdmins: 1, status: 1 } },
       {
         $lookup: {
           from: 'users',
@@ -32,7 +40,7 @@ export const getClaimList: RequestHandler = async (req, res, next) => {
           ],
         },
       },
-    ]);
+    ]).sort({ createdAt: -1 });
 
     return res.status(HttpStatusCode.OK).json({
       claims,
@@ -87,6 +95,8 @@ export const getClaimDetail: RequestHandler = async (req, res, next) => {
       ])) as ClaimDetail[]
     )[0];
 
+    if (claim.isAnonymous) claim.createUserId = undefined;
+
     return res.status(HttpStatusCode.OK).json({
       claim,
     });
@@ -100,23 +110,14 @@ export const createClaim: RequestHandler = async (req, res, next) => {
   const { isAnonymous } = req.query;
   const { companyId, _id: createUserId } = req.userData!;
   try {
-    let claim: IClaim;
-    if (JSON.parse(isAnonymous as string)) {
-      claim = await Claim.create({
-        title,
-        body,
-        category,
-        companyId,
-      });
-    } else {
-      claim = await Claim.create({
-        title,
-        body,
-        category,
-        companyId,
-        createUserId,
-      });
-    }
+    const claim = await Claim.create({
+      title,
+      body,
+      category,
+      companyId,
+      createUserId,
+      isAnonymous: JSON.parse(isAnonymous as string),
+    });
 
     return res.status(HttpStatusCode.CREATED).json({
       message: 'New claim created successfully!',
