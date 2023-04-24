@@ -21,7 +21,7 @@ const checkAuth: RequestHandler = async (req, res, next) => {
       process.env.JWT_SECRET!
     ) as UserJwtPayload;
 
-    const user = await User.findById(decodedToken.userId);
+    const user = await User.findById(decodedToken.userId).populate('roleId');
 
     if (!user) {
       throw new AppError({
@@ -31,6 +31,7 @@ const checkAuth: RequestHandler = async (req, res, next) => {
     }
     req.userData = {
       ...user._doc,
+      role: user.roleId,
       password: undefined,
     };
 

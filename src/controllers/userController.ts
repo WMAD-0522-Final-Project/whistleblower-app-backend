@@ -174,6 +174,32 @@ export const getUserInfo: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const getContactedUser: RequestHandler = async (req, res, next) => {
+  const { companyId } = req.userData!;
+  const { page = 0 } = req.query;
+  const USERS_PER_PAGE = 15;
+  try {
+    const users = await User.find({
+      companyId,
+      inquiry: { $exists: true },
+    })
+      .select({
+        email: 1,
+        firstName: 1,
+        lastName: 1,
+        inquiry: 1,
+      })
+      .skip(+page * USERS_PER_PAGE)
+      .limit(USERS_PER_PAGE);
+
+    return res.status(HttpStatusCode.OK).json({
+      users,
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 export const updateUserInfo: RequestHandler = async (req, res, next) => {
   const { userId } = req.params;
   const { email, firstName, lastName, departmentId, permissions, role } =
