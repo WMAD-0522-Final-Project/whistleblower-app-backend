@@ -187,6 +187,7 @@ export const getContactedUser: RequestHandler = async (req, res, next) => {
         email: 1,
         firstName: 1,
         lastName: 1,
+        inquiry: 1,
       })
       .skip(+page * USERS_PER_PAGE)
       .limit(USERS_PER_PAGE);
