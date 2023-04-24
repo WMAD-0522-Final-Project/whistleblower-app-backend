@@ -52,7 +52,7 @@ export const signup: RequestHandler = async (req, res, next) => {
 export const login: RequestHandler = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate('roleId');
     if (!user) {
       throw new AppError({
         statusCode: HttpStatusCode.NOT_FOUND,
@@ -73,7 +73,7 @@ export const login: RequestHandler = async (req, res, next) => {
     });
     return res.status(HttpStatusCode.OK).json({
       message: 'User logged in successfully!',
-      user: { ...user._doc, password: undefined },
+      user: { ...user._doc, role: user.roleId, password: undefined },
       token,
     });
   } catch (err) {
