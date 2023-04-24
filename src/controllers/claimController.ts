@@ -14,26 +14,25 @@ export const getClaimList: RequestHandler = async (req, res, next) => {
   const { status } = req.query;
   const { companyId } = req.userData!;
   try {
-    let claims;
-    if (status === undefined) {
-      claims = await Claim.find({ companyId });
-    } else {
-      claims = await Claim.aggregate([
-        { $match: { status, companyId: new Types.ObjectId(companyId) } },
-        { $project: { title: 1, createdAt: 1, inChargeAdmins: 1 } },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'inChargeAdmins',
-            foreignField: '_id',
-            as: 'inChargeAdmins',
-            pipeline: [
-              { $project: { profileImg: 1, firstName: 1, lastName: 1 } },
-            ],
-          },
+    const matchCondition = status
+      ? { status, companyId: new Types.ObjectId(companyId) }
+      : { companyId: new Types.ObjectId(companyId) };
+
+    const claims = await Claim.aggregate([
+      { $match: matchCondition },
+      { $project: { title: 1, createdAt: 1, inChargeAdmins: 1 } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'inChargeAdmins',
+          foreignField: '_id',
+          as: 'inChargeAdmins',
+          pipeline: [
+            { $project: { profileImg: 1, firstName: 1, lastName: 1 } },
+          ],
         },
-      ]);
-    }
+      },
+    ]);
 
     return res.status(HttpStatusCode.OK).json({
       claims,
