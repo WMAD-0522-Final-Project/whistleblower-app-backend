@@ -5,6 +5,7 @@ import { HttpStatusCode } from '../types/enums';
 import User from '../models/user';
 import generateToken from '../utils/generateToken';
 import verifyRefreshToken from '../utils/verifyRefreshToken';
+import RefreshToken from '../models/refreshToken';
 
 export const verifyToken: RequestHandler = async (req, res, next) => {
   // token gets verified in middleware
@@ -46,9 +47,17 @@ export const login: RequestHandler = async (req, res, next) => {
   }
 };
 
-export const logout: RequestHandler = (req, res, next) => {
+export const logout: RequestHandler = async (req, res, next) => {
+  const { _id: userId } = req.userData!;
   try {
-  } catch (err) {}
+    await RefreshToken.deleteOne({ userId });
+
+    return res.status(HttpStatusCode.OK).json({
+      message: 'User logged out successfully!',
+    });
+  } catch (err) {
+    next(err);
+  }
 };
 
 export const refreshToken: RequestHandler = async (req, res, next) => {
