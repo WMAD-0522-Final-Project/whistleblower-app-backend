@@ -169,7 +169,7 @@ export const changeClaimStatus: RequestHandler = async (req, res, next) => {
     claim.status = status;
     await claim.save();
 
-    const logContent = `${firstName} ${lastName} changed status of claim(id: ${claim._id}) from ${prevStatus} to ${claim.status}`;
+    const logContent = `<b>${firstName} ${lastName}</b> changed status of <b>claim (id: ${claim._id})</b> from <b>${prevStatus}</b> to <b>${claim.status}</b>`;
 
     await Log.create({
       userId,
