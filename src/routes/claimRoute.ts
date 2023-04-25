@@ -8,6 +8,7 @@ import {
   getMessages,
   createMessage,
   changeMessageReadStatus,
+  changeClaimLabel,
   getLabels,
   findLabels,
   deleteLabel,
@@ -42,6 +43,12 @@ router.put(
   '/:claimId/changeStatus',
   checkPermission(UserPermissionOption.CASE_MANAGEMENT),
   changeClaimStatus
+);
+
+router.put(
+  '/:claimId/changeLabel',
+  checkPermission(UserPermissionOption.CASE_MANAGEMENT),
+  changeClaimLabel
 );
 
 // label

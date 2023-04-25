@@ -186,6 +186,29 @@ export const changeClaimStatus: RequestHandler = async (req, res, next) => {
   }
 };
 
+export const changeClaimLabel: RequestHandler = async (req, res, next) => {
+  const { claimId } = req.params;
+  const { labels } = req.body;
+
+  try {
+    const claim = await Claim.findById(claimId);
+    if (!claim) {
+      throw new AppError({
+        statusCode: HttpStatusCode.NOT_FOUND,
+        message: 'Claim with provided id not found.',
+      });
+    }
+    claim.labels = labels;
+    await claim.save();
+
+    res.status(HttpStatusCode.OK).json({
+      message: 'Label for claim updated successfully!',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
 // label
 export const getLabels: RequestHandler = async (req, res, next) => {
   const { companyId } = req.userData!;
