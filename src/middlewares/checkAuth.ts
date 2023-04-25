@@ -37,11 +37,6 @@ const checkAuth: RequestHandler = async (req, res, next) => {
 
     next();
   } catch (err) {
-    if (err instanceof JsonWebTokenError) {
-      return res.status(HttpStatusCode.UNAUTHORIZED).json({
-        message: 'Invalid token provided.',
-      });
-    }
     next(err);
   }
 };

@@ -80,7 +80,7 @@ export const refreshToken: RequestHandler = async (req, res, next) => {
     res.status(HttpStatusCode.CREATED).json({
       accessToken,
       refreshToken: newRefreshToken,
-      message: 'Nes token created successfully',
+      message: 'New token created successfully',
     });
   } catch (err) {
     next(err);

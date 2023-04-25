@@ -4,6 +4,7 @@ import multer from 'multer';
 import AppError from '../error/AppError';
 import { ValidationErrors } from '../types';
 import { HttpStatusCode, ErrorType } from '../types/enums';
+import { JsonWebTokenError } from 'jsonwebtoken';
 
 const handleMongooseServerError = (err: any, res: Response) => {
   // duplicate key error
@@ -40,6 +41,12 @@ const handleMongooseValidationError = (
 
 export const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
   console.error('error: ', err);
+
+  if (err instanceof JsonWebTokenError) {
+    return res.status(HttpStatusCode.UNAUTHORIZED).json({
+      message: 'Invalid token provided.',
+    });
+  }
 
   if (err instanceof multer.MulterError) {
     return res.status(HttpStatusCode.BAD_REQUEST).json({
