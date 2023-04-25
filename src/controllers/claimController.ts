@@ -28,7 +28,15 @@ export const getClaimList: RequestHandler = async (req, res, next) => {
 
     const claims = await Claim.aggregate([
       { $match: matchCondition },
-      { $project: { title: 1, createdAt: 1, inChargeAdmins: 1, status: 1 } },
+      {
+        $project: {
+          title: 1,
+          createdAt: 1,
+          inChargeAdmins: 1,
+          body: 1,
+          status: 1,
+        },
+      },
       {
         $lookup: {
           from: 'users',
