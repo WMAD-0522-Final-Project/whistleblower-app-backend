@@ -4,6 +4,7 @@ import bcrypt from 'bcryptjs';
 import AppError from '../error/AppError';
 import { HttpStatusCode } from '../types/enums';
 import User from '../models/user';
+import generateToken from '../utils/generateToken';
 
 export const verifyToken: RequestHandler = async (req, res, next) => {
   // token gets verified in middleware
@@ -33,16 +34,16 @@ export const signup: RequestHandler = async (req, res, next) => {
     // using update query so that validation hook will not execute again in case hashed password doesn't meet validation
     await User.updateOne({ email }, { password: hashedPassword });
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
-      expiresIn: process.env.AUTH_EXPIRESIN!,
-    });
+    const { accessToken, refreshToken } = await generateToken(user);
+
     return res.status(HttpStatusCode.CREATED).json({
       message: 'New user registered successfully!',
       user: {
         ...user._doc,
         password: undefined,
       },
-      token,
+      token: accessToken,
+      refreshToken,
     });
   } catch (err) {
     next(err);
@@ -68,13 +69,13 @@ export const login: RequestHandler = async (req, res, next) => {
       });
     }
 
-    const token = jwt.sign({ userId: user._id }, process.env.JWT_SECRET!, {
-      expiresIn: process.env.AUTH_EXPIRESIN!,
-    });
+    const { accessToken, refreshToken } = await generateToken(user);
+
     return res.status(HttpStatusCode.OK).json({
       message: 'User logged in successfully!',
       user: { ...user._doc, role: user.roleId, password: undefined },
-      token,
+      token: accessToken,
+      refreshToken,
     });
   } catch (err) {
     next(err);
