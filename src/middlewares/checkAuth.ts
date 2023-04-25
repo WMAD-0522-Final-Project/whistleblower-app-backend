@@ -1,5 +1,4 @@
-import { Types } from 'mongoose';
-import jwt from 'jsonwebtoken';
+import jwt, { JsonWebTokenError } from 'jsonwebtoken';
 import { RequestHandler } from 'express';
 import AppError from '../error/AppError';
 import { UserJwtPayload } from '../types';
@@ -15,9 +14,10 @@ const checkAuth: RequestHandler = async (req, res, next) => {
         statusCode: HttpStatusCode.UNAUTHORIZED,
       });
     }
-    const token = authorizationHeader.split(' ')[1];
+    const accessToken = authorizationHeader.split(' ')[1];
+
     const decodedToken = jwt.verify(
-      token,
+      accessToken,
       process.env.JWT_SECRET!
     ) as UserJwtPayload;
 
@@ -37,6 +37,11 @@ const checkAuth: RequestHandler = async (req, res, next) => {
 
     next();
   } catch (err) {
+    if (err instanceof JsonWebTokenError) {
+      return res.status(HttpStatusCode.UNAUTHORIZED).json({
+        message: 'Invalid token provided.',
+      });
+    }
     next(err);
   }
 };
