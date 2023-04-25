@@ -14,42 +14,6 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
   });
 };
 
-export const signup: RequestHandler = async (req, res, next) => {
-  const { email, password, firstName, lastName, companyId } = req.body;
-  try {
-    const user = await User.create({
-      email,
-      password,
-      firstName,
-      lastName,
-      companyId,
-    });
-
-    const hashedPassword = await bcrypt.hash(
-      password,
-      Number(process.env.SALT!)
-    );
-
-    // to utilize mongoose validation, we have to save hashed password after saving database
-    // using update query so that validation hook will not execute again in case hashed password doesn't meet validation
-    await User.updateOne({ email }, { password: hashedPassword });
-
-    const { accessToken, refreshToken } = await generateToken(user._id);
-
-    return res.status(HttpStatusCode.CREATED).json({
-      message: 'New user registered successfully!',
-      user: {
-        ...user._doc,
-        password: undefined,
-      },
-      token: accessToken,
-      refreshToken,
-    });
-  } catch (err) {
-    next(err);
-  }
-};
-
 export const login: RequestHandler = async (req, res, next) => {
   const { email, password } = req.body;
   try {
