@@ -1,10 +1,10 @@
 import { RequestHandler } from 'express';
-import jwt from 'jsonwebtoken';
 import bcrypt from 'bcryptjs';
 import AppError from '../error/AppError';
 import { HttpStatusCode } from '../types/enums';
 import User from '../models/user';
 import generateToken from '../utils/generateToken';
+import verifyRefreshToken from '../utils/verifyRefreshToken';
 
 export const verifyToken: RequestHandler = async (req, res, next) => {
   // token gets verified in middleware
@@ -34,7 +34,7 @@ export const signup: RequestHandler = async (req, res, next) => {
     // using update query so that validation hook will not execute again in case hashed password doesn't meet validation
     await User.updateOne({ email }, { password: hashedPassword });
 
-    const { accessToken, refreshToken } = await generateToken(user);
+    const { accessToken, refreshToken } = await generateToken(user._id);
 
     return res.status(HttpStatusCode.CREATED).json({
       message: 'New user registered successfully!',
@@ -69,7 +69,7 @@ export const login: RequestHandler = async (req, res, next) => {
       });
     }
 
-    const { accessToken, refreshToken } = await generateToken(user);
+    const { accessToken, refreshToken } = await generateToken(user._id);
 
     return res.status(HttpStatusCode.OK).json({
       message: 'User logged in successfully!',
@@ -85,4 +85,31 @@ export const login: RequestHandler = async (req, res, next) => {
 export const logout: RequestHandler = (req, res, next) => {
   try {
   } catch (err) {}
+};
+
+export const refreshToken: RequestHandler = async (req, res, next) => {
+  try {
+    const authorizationHeader = req.headers.authorization;
+    if (!authorizationHeader) {
+      throw new AppError({
+        message: 'Please provide authorization header.',
+        statusCode: HttpStatusCode.UNAUTHORIZED,
+      });
+    }
+    const refreshToken = authorizationHeader.split(' ')[1];
+
+    const verifiedToken = await verifyRefreshToken(refreshToken);
+
+    const { accessToken, refreshToken: newRefreshToken } = await generateToken(
+      verifiedToken.userId
+    );
+
+    res.status(HttpStatusCode.CREATED).json({
+      accessToken,
+      refreshToken: newRefreshToken,
+      message: 'Nes token created successfully',
+    });
+  } catch (err) {
+    next(err);
+  }
 };

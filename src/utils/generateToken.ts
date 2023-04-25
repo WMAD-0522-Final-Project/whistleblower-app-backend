@@ -1,9 +1,9 @@
+import { Types } from 'mongoose';
 import RefreshToken from '../models/refreshToken';
-import { IUser } from '../types';
 import jwt from 'jsonwebtoken';
 
-const generateToken = async (user: IUser) => {
-  const payload = { userId: user._id };
+const generateToken = async (userId: Types.ObjectId) => {
+  const payload = { userId };
 
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
     expiresIn: '10s',
@@ -13,10 +13,10 @@ const generateToken = async (user: IUser) => {
     expiresIn: '5m',
   });
 
-  await RefreshToken.deleteOne({ userId: user._id });
+  await RefreshToken.deleteOne({ userId });
 
   await RefreshToken.create({
-    userId: user._id,
+    userId,
     token: refreshToken,
   });
   return { accessToken, refreshToken };
