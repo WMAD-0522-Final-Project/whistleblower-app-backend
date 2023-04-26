@@ -56,6 +56,7 @@ export const getClaimList: RequestHandler = async (req, res, next) => {
           title: 1,
           createdAt: 1,
           inChargeAdmins: 1,
+          hasNewComment: 1,
           body: 1,
           status: 1,
           labels: 1,
