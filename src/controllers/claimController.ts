@@ -124,7 +124,7 @@ export const createClaim: RequestHandler = async (req, res, next) => {
     const claim = await Claim.create({
       title,
       body,
-      category: JSON.parse(category),
+      category,
       companyId,
       createUserId,
       isAnonymous: JSON.parse(isAnonymous as string),
