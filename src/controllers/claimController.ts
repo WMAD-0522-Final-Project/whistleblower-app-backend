@@ -30,15 +30,7 @@ export const getClaimList: RequestHandler = async (req, res, next) => {
 
     const claims = await Claim.aggregate([
       { $match: matchCondition },
-      {
-        $project: {
-          title: 1,
-          createdAt: 1,
-          inChargeAdmins: 1,
-          body: 1,
-          status: 1,
-        },
-      },
+
       {
         $lookup: {
           from: 'users',
@@ -48,6 +40,25 @@ export const getClaimList: RequestHandler = async (req, res, next) => {
           pipeline: [
             { $project: { profileImg: 1, firstName: 1, lastName: 1 } },
           ],
+        },
+      },
+      {
+        $lookup: {
+          from: 'labels',
+          localField: 'labels',
+          foreignField: '_id',
+          as: 'labels',
+          pipeline: [{ $project: { companyId: 0 } }],
+        },
+      },
+      {
+        $project: {
+          title: 1,
+          createdAt: 1,
+          inChargeAdmins: 1,
+          body: 1,
+          status: 1,
+          labels: 1,
         },
       },
     ]).sort({ createdAt: -1 });
