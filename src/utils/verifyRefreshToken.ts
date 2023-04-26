@@ -14,7 +14,7 @@ const verifyRefreshToken = async (token: string) => {
   }
   const verifiedToken = jwt.verify(
     token,
-    process.env.JWT_SECRET!
+    process.env.REFRESH_TOKEN_SECRET!
   ) as UserJwtPayload;
 
   return verifiedToken;
