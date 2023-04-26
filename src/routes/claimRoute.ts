@@ -22,6 +22,9 @@ import {
 import checkAuth from '../middlewares/checkAuth';
 import checkPermission from '../middlewares/checkPermission';
 import { UserPermissionOption } from '../types/enums';
+import multer from '../middlewares/multer';
+
+const upload = multer.single('claimFile');
 
 const router = express.Router();
 
@@ -33,7 +36,15 @@ router.get(
   checkPermission(UserPermissionOption.REPORT_VIEWING),
   getClaimDetail
 );
-router.post('/create', createClaim);
+router.post(
+  '/create',
+  function (req, res, next) {
+    upload(req, res, function (err) {
+      next(err);
+    });
+  },
+  createClaim
+);
 router.put(
   '/:claimId/assign',
   checkPermission(UserPermissionOption.CASE_MANAGEMENT),
