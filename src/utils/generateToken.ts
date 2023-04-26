@@ -6,11 +6,11 @@ const generateToken = async (userId: Types.ObjectId) => {
   const payload = { userId };
 
   const accessToken = jwt.sign(payload, process.env.JWT_SECRET!, {
-    expiresIn: '10s',
+    expiresIn: process.env.AUTH_ACESSTOKEN_EXPIRESIN!,
   });
 
   const refreshToken = jwt.sign(payload, process.env.REFRESH_TOKEN_SECRET!, {
-    expiresIn: '5m',
+    expiresIn: process.env.AUTH_REFRESH_TOKEN_EXPIRESIN!,
   });
 
   await RefreshToken.deleteOne({ userId });
