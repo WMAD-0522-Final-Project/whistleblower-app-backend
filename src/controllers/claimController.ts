@@ -1,15 +1,17 @@
 import { RequestHandler } from 'express';
 import { Types } from 'mongoose';
 
+import { SERVER_TMP_DIRECTORY } from '../config/constants';
 import Claim from '../models/claim';
-import AppError from '../error/AppError';
-import { HttpStatusCode, UserRoleOption } from '../types/enums';
 import Label from '../models/label';
+import UserRole from '../models/userRole';
 import ClaimCategory from '../models/claimCategory';
 import CommentMessage from '../models/commentMessage';
-import { ClaimDetail, IClaim } from '../types';
 import Log from '../models/log';
-import UserRole from '../models/userRole';
+import AppError from '../error/AppError';
+import { HttpStatusCode, UserRoleOption } from '../types/enums';
+import { ClaimDetail } from '../types';
+import uploadFile from '../utils/uploadFile';
 
 export const getClaimList: RequestHandler = async (req, res, next) => {
   const { status } = req.query;
@@ -117,15 +119,26 @@ export const createClaim: RequestHandler = async (req, res, next) => {
   const { title, body, category } = req.body;
   const { isAnonymous } = req.query;
   const { companyId, _id: createUserId } = req.userData!;
+
   try {
     const claim = await Claim.create({
       title,
       body,
-      category,
+      category: JSON.parse(category),
       companyId,
       createUserId,
       isAnonymous: JSON.parse(isAnonymous as string),
     });
+
+    if (req.file) {
+      const { url } = await uploadFile(
+        `/${SERVER_TMP_DIRECTORY}/${req.file.filename}`,
+        claim._id.toHexString(),
+        'claim'
+      );
+      claim.file = url;
+      await claim.save();
+    }
 
     return res.status(HttpStatusCode.CREATED).json({
       message: 'New claim created successfully!',
