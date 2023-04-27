@@ -18,7 +18,9 @@ export const verifyToken: RequestHandler = async (req, res, next) => {
 export const login: RequestHandler = async (req, res, next) => {
   const { email, password } = req.body;
   try {
-    const user = await User.findOne({ email }).populate('roleId');
+    const user = await User.findOne({ email })
+      .populate('roleId')
+      .populate('permissions');
     if (!user) {
       throw new AppError({
         statusCode: HttpStatusCode.NOT_FOUND,
