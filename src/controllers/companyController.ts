@@ -1,7 +1,7 @@
 import { RequestHandler } from 'express';
 import { Types } from 'mongoose';
 import AppError from '../error/AppError';
-import { CompanyDetail } from '../types';
+import { CompanyDetail, IDepartment } from '../types';
 import { HttpStatusCode } from '../types/enums';
 import Company from '../models/company';
 import uploadFile from '../utils/uploadFile';
@@ -158,6 +158,30 @@ export const deleteDepartment: RequestHandler = async (req, res, next) => {
 
     return res.status(HttpStatusCode.OK).json({
       message: 'Department deleted successfully!',
+    });
+  } catch (err) {
+    next(err);
+  }
+};
+
+export const updateCompanyAllDepartment: RequestHandler = async (
+  req,
+  res,
+  next
+) => {
+  const { departments } = req.body;
+  const { companyId } = req.userData!;
+  try {
+    await Department.deleteMany({ companyId });
+
+    const departmentDatas = (departments as IDepartment[]).map((dep) => {
+      return { ...dep, companyId };
+    });
+    const department = await Department.create(departmentDatas);
+
+    return res.status(HttpStatusCode.OK).json({
+      message: 'Department updated successfully!',
+      department,
     });
   } catch (err) {
     next(err);
