@@ -445,6 +445,16 @@ export const createMessage: RequestHandler = async (req, res, next) => {
   const { message } = req.body;
 
   try {
+    const claim = await Claim.findById(claimId);
+    if (!claim) {
+      throw new AppError({
+        statusCode: HttpStatusCode.NOT_FOUND,
+        message: 'Claim with provided ID not found.',
+      });
+    }
+    claim.hasNewComment = true;
+    await claim.save();
+
     const msg = await CommentMessage.create({
       claimId,
       userId,
