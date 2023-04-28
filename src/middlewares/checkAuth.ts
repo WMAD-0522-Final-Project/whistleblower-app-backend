@@ -21,7 +21,9 @@ const checkAuth: RequestHandler = async (req, res, next) => {
       process.env.JWT_SECRET!
     ) as UserJwtPayload;
 
-    const user = await User.findById(decodedToken.userId).populate('roleId');
+    const user = await User.findById(decodedToken.userId)
+      .populate('roleId')
+      .populate('permissions');
 
     if (!user) {
       throw new AppError({
