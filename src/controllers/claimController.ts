@@ -4,14 +4,21 @@ import { Types } from 'mongoose';
 import { SERVER_TMP_DIRECTORY } from '../config/constants';
 import Claim from '../models/claim';
 import Label from '../models/label';
+import User from '../models/user';
 import UserRole from '../models/userRole';
 import ClaimCategory from '../models/claimCategory';
 import CommentMessage from '../models/commentMessage';
 import Log from '../models/log';
 import AppError from '../error/AppError';
-import { HttpStatusCode, UserRoleOption } from '../types/enums';
+import {
+  HttpStatusCode,
+  UserPermissionOption,
+  UserRoleOption,
+} from '../types/enums';
 import { ClaimDetail } from '../types';
 import uploadFile from '../utils/uploadFile';
+import sendEmail from '../utils/sendEmail';
+import { getPermissionIds } from '../utils/getId';
 
 export const getClaimList: RequestHandler = async (req, res, next) => {
   const { status } = req.query;
@@ -150,6 +157,29 @@ export const createClaim: RequestHandler = async (req, res, next) => {
       );
       claim.file = url;
       await claim.save();
+    }
+
+    const admins = await User.find({
+      permissions: {
+        $in: await getPermissionIds([
+          UserPermissionOption.CASE_MANAGEMENT,
+          UserPermissionOption.REPORT_VIEWING,
+        ]),
+      },
+    });
+
+    if (admins.length > 0) {
+      const adminEmails = admins.map((admin) => {
+        return admin.email;
+      });
+      const subject = `New claim created`;
+
+      const mailBody = `
+          <h1>Hello, Admin team.</h1>
+          <p>New claim about <b> ${claim.title} </b> is  created. </p>
+          <p>Please check admin dashboard.</p>
+        `;
+      await sendEmail(adminEmails, subject, mailBody);
     }
 
     return res.status(HttpStatusCode.CREATED).json({
