@@ -161,7 +161,10 @@ export const createClaim: RequestHandler = async (req, res, next) => {
 
     const admins = await User.find({
       permissions: {
-        $in: await getPermissionIds([UserPermissionOption.CASE_MANAGEMENT]),
+        $in: await getPermissionIds([
+          UserPermissionOption.CASE_MANAGEMENT,
+          UserPermissionOption.REPORT_VIEWING,
+        ]),
       },
     });
 
