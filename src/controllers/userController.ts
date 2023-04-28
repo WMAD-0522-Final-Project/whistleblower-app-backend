@@ -11,7 +11,6 @@ import { getPermissionIds, getRoleId } from '../utils/getId';
 import sendEmail from '../utils/sendEmail';
 import { UserDetail, UserRoleOptionType } from '../types';
 
-
 export const createNewUser: RequestHandler = async (req, res, next) => {
   const { companyId } = req.userData!;
   const {

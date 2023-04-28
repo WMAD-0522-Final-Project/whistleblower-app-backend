@@ -24,7 +24,7 @@ export const contactAdmin: RequestHandler = async (req, res, next) => {
     let adminTeams: IUser[];
 
     if (
-      inquiryType === inquiryOption.FORGOT_PASSWORD ||
+      inquiryType === inquiryOption.FORGOT_LOGIN_CREDENTIALS ||
       inquiryType === inquiryOption.CHANGE_USER_INFORMATION
     ) {
       adminTeams = await User.find({
@@ -32,7 +32,7 @@ export const contactAdmin: RequestHandler = async (req, res, next) => {
           $in: await getPermissionIds([UserPermissionOption.USER_MANAGEMENT]),
         },
       });
-    } else if (inquiryType === inquiryOption.SYSTEM_ISSUE) {
+    } else if (inquiryType === inquiryOption.TECHNICAL_ISSUE) {
       adminTeams = await User.find({
         permissions: {
           $in: await getPermissionIds([UserPermissionOption.SYSTEM_MANAGEMENT]),

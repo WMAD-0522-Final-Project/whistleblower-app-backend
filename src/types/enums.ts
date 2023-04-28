@@ -19,9 +19,9 @@ export enum UserPermissionOption {
 
 // contacts
 export enum inquiryOption {
-  FORGOT_PASSWORD = 'Forgot Password',
-  CHANGE_USER_INFORMATION = 'Change User Information',
-  SYSTEM_ISSUE = 'System Issue',
+  FORGOT_LOGIN_CREDENTIALS = 'ForgotLoginCredentials',
+  CHANGE_USER_INFORMATION = 'ChangeUserInformation',
+  TECHNICAL_ISSUE = 'TechnicalIssue',
   OTHERS = 'Others',
 }
 
