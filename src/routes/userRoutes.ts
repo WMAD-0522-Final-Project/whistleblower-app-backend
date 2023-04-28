@@ -41,7 +41,6 @@ router.put(
 );
 router.put(
   '/:userId/info/profileImg/update',
-  checkPermission(UserPermissionOption.USER_MANAGEMENT),
   function (req, res, next) {
     upload(req, res, function (err) {
       next(err);
