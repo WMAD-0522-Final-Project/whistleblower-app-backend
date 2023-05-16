@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { Types } from 'mongoose';
+import { Types, Query, UpdateQuery } from 'mongoose';
 import AppError from '../error/AppError';
 import { CompanyDetail, IDepartment } from '../types';
 import { HttpStatusCode } from '../types/enums';
@@ -7,6 +7,7 @@ import Company from '../models/company';
 import uploadFile from '../utils/uploadFile';
 import { SERVER_TMP_DIRECTORY } from '../config/constants';
 import Department from '../models/department';
+import User from '../models/user';
 
 export const createCompany: RequestHandler = async (req, res, next) => {
   const { name, logoImg, themeColors } = req.body;
@@ -169,19 +170,68 @@ export const updateCompanyAllDepartment: RequestHandler = async (
   res,
   next
 ) => {
-  const { departments } = req.body;
+  const { departments } = req.body as { departments: IDepartment[] };
   const { companyId } = req.userData!;
+  console.log('request came');
   try {
-    await Department.deleteMany({ companyId });
-
-    const departmentDatas = (departments as IDepartment[]).map((dep) => {
-      return { ...dep, companyId };
+    const currentDepartments: IDepartment[] = await Department.find({
+      companyId,
     });
-    const department = await Department.create(departmentDatas);
+
+    //TODO: define promise type correctly
+    const promises: Promise<any>[] = [];
+
+    // in current, and in department => changed
+    // in current , but not in department => deleted
+    for (const cdep of currentDepartments) {
+      let isDeleted = false;
+      if (departments.length === 0) {
+        promises.push(
+          Department.deleteMany({ companyId }),
+          User.updateMany({ companyId }, { departmentId: undefined })
+        );
+      }
+
+      for (const dep of departments) {
+        if (cdep._id === dep._id && cdep.name !== dep.name) {
+          promises.push(
+            Department.updateOne({ _id: dep._id }, { $set: { name: dep.name } })
+          );
+
+          break;
+        }
+
+        isDeleted = true;
+      }
+
+      if (isDeleted)
+        promises.push(Department.deleteOne({ _id: cdep._id })),
+          User.updateMany(
+            { departmentId: cdep._id },
+            { departmentId: undefined }
+          );
+    }
+
+    // not in current but in department => added
+    for (const dep of departments) {
+      let isAdded = false;
+      if (currentDepartments.length === 0) {
+        promises.push(Department.create({ ...dep, _id: undefined, companyId }));
+        continue;
+      }
+      for (const cdp of currentDepartments) {
+        if (dep._id === cdp._id) break;
+        isAdded = true;
+      }
+      if (isAdded)
+        promises.push(Department.create({ ...dep, companyId, _id: undefined }));
+    }
+
+    const promiseRes = await Promise.all(promises);
 
     return res.status(HttpStatusCode.OK).json({
       message: 'Department updated successfully!',
-      department,
+      departments: promiseRes,
     });
   } catch (err) {
     next(err);
