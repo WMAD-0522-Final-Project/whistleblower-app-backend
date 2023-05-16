@@ -1,7 +1,7 @@
 # whistleblower-app
-- [frontend-repo]()
-- [backend-repo]()
-- [api-docs]()
+- [frontend-repo](https://github.com/WMAD-0522-Final-Project/whistleblower-app-frontend)
+- [backend-repo](https://github.com/WMAD-0522-Final-Project/whistleblower-app-backend)
+- [api-docs](https://github.com/WMAD-0522-Final-Project/whistleblower-app-api-documentation/wiki)
 ## What is this app?
 robust whistleblowing system that allows employees and stakeholders to report issues without fear of retaliation or negative consequences.
 ## primary objectives for this project
