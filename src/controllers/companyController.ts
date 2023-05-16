@@ -1,5 +1,5 @@
 import { RequestHandler } from 'express';
-import { Types, Query, UpdateQuery } from 'mongoose';
+import { Types } from 'mongoose';
 import AppError from '../error/AppError';
 import { CompanyDetail, IDepartment } from '../types';
 import { HttpStatusCode } from '../types/enums';
