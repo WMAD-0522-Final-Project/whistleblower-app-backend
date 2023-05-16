@@ -100,7 +100,12 @@ export const getUserList: RequestHandler = async (req, res, next) => {
           pipeline: [{ $project: { companyId: 0 } }],
         },
       },
-      { $unwind: '$department' },
+      {
+        $unwind: {
+          path: '$department',
+          preserveNullAndEmptyArrays: true,
+        },
+      },
       {
         $project: {
           password: 0,
