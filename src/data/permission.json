@@ -1,0 +1,14 @@
+[
+    {
+        "name": "systemManagement"
+    },
+    {
+        "name": "caseManagement"
+    },
+    {
+        "name": "reportViewing"
+    },
+    {
+        "name": "userManagement"
+    }
+]
